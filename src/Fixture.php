@@ -82,6 +82,22 @@ class Fixture
         }
     }
 
+    public function loadWithOverride(string $pathToFixturesFile, array $override): void
+    {
+        $tables = \json_decode(
+            \str_replace(
+                \array_keys($override),
+                \array_values($override),
+                \json_encode($this->loader->load($pathToFixturesFile))
+            ),
+            true
+        );
+
+        foreach ($tables as $table => $rows) {
+            $this->processTableRows($table, $rows);
+        }
+    }
+
     private function processTableRows(string $table, array $rows): void
     {
         $primaryKey = $this->connection->primaryKeyOf($table);
